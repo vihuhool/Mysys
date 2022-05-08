@@ -1,0 +1,67 @@
+﻿@model Mysys.Models.Collection
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Collection</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Theme" class="control-label"></label>
+                <select asp-for="Theme" class="form-control" asp-items="Html.GetEnumSelectList<Collection.Themes>()"></select>
+                <span asp-validation-for="Theme" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageURL" class="control-label"></label>
+                <input asp-for="ImageURL" class="form-control" />
+                <span asp-validation-for="ImageURL" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdditionalTextFields" class="control-label"></label>
+                <input asp-for="AdditionalTextFields" class="form-control" />
+                <span asp-validation-for="AdditionalTextFields" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdditionalDateTimeFields" class="control-label"></label>
+                <input asp-for="AdditionalDateTimeFields" class="form-control" />
+                <span asp-validation-for="AdditionalDateTimeFields" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AdditionalBoolFields" class="control-label"></label>
+                <input asp-for="AdditionalBoolFields" class="form-control" />
+                <span asp-validation-for="AdditionalBoolFields" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="UserID" type="hidden" class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

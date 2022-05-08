@@ -1,0 +1,130 @@
+﻿@model Mysys.Models.Collection
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Collection</h4>
+<hr />
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" required/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Theme" class="control-label"></label>
+                <select asp-for="Theme" class="form-control" asp-items="Html.GetEnumSelectList<Collection.Themes>()"></select>
+                <span asp-validation-for="Theme" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ImageURL" class="control-label">Image</label>
+                <input asp-for="ImageURL" class="form-control" />
+                <span asp-validation-for="ImageURL" class="text-danger"></span>
+            </div>
+
+            <br />
+            <div class="container">
+                <div class="container" id="Fields">
+
+                        </div>
+                <div class="form-group col-md-12">
+                    <label>You can add multiple fields to all items in your collection. 
+                    
+                    </label>
+                    <div class="row" id="FieldSelector">
+                        <div class="col-md-4">
+                            <input class="form-control" placeholder="Field name" id="fieldName" />
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-control" asp-items="Html.GetEnumSelectList<Collection.Fields>()" id="field" name="field" onselect="getFieldName()"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-primary" onclick="addField()">Add custom field</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tags" class="control-label"></label>
+                <input asp-for="Tags" class="form-control" />
+                <span asp-validation-for="Tags" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+<div style="display: none" data-type="field-template" class="container">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default"></span>
+        </div>
+        <input type="hidden" name="fieldType"/>
+         <input type="hidden" name="fieldName"/>
+       
+        <div class="input-group-append">
+            <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.parentNode.parentNode.remove()">Delete</button>
+        </div>
+    </div>
+    </div>
+
+
+<script>
+    function addField() {
+        let fieldName = document.getElementById("fieldName").value;
+        if (fieldName == "") { return; }
+        document.getElementById("fieldName").value = "";
+
+        let fieldTypeSelector = document.getElementById("field");
+        let fieldType = fieldTypeSelector.options[fieldTypeSelector.selectedIndex].text;
+
+        let docFrag = document.createDocumentFragment();
+        let tempNode = document.querySelector("div[data-type='field-template']").cloneNode(true);
+        tempNode.style.display = "block";
+
+        tempNode.querySelector("span").textContent = fieldName;
+
+        if (fieldType == "Text") {
+          // tempNode.querySelector("input[name=type]").type = "text";
+            tempNode.querySelector("input[name=fieldType]").value = "TextField";
+            tempNode.querySelector("input[name=fieldName]").value = fieldName;
+        } else if (fieldType == "Date") {
+          // tempNode.querySelector("input[name=type]").type = "date";
+            tempNode.querySelector("input[name=fieldType]").value = "DateTimeField";
+            tempNode.querySelector("input[name=fieldName]").value = fieldName;
+        } else {
+          //tempNode.querySelector("input[name=type]").type = "checkbox";
+            tempNode.querySelector("input[name=fieldType]").value = "BoolField";
+            tempNode.querySelector("input[name=fieldName]").value = fieldName;
+        }
+
+        docFrag.appendChild(tempNode);
+
+        document.getElementById("Fields").appendChild(docFrag);
+        delete docFrag;
+    }
+</script>

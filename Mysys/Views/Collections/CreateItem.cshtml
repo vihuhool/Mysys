@@ -1,0 +1,29 @@
+﻿@using Mysys.Data
+@model Mysys.Models.Item
+
+@{
+    
+    //ViewData["Title"] = "Create";
+    var Data = ViewBag.Context as ApplicationDbContext;
+}
+
+<h1>Create</h1>
+
+<h4>Collection</h4>
+<hr />
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="CreateItem">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" required/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            
+             </form>
+            </div>
+            </div>
+            
+
+           
