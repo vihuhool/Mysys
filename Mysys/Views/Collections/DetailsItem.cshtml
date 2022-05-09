@@ -1,0 +1,128 @@
+﻿@model Mysys.Models.Item
+@using Mysys.Data
+@{
+
+    ViewData["Title"] = "DetailsItem";
+    //  var Data = ViewBag.Context as ApplicationDbContext;
+}
+
+ <section id="section-responsive-images">
+    <!-- Section title -->
+    <h2 class="mb-4">@Model.Name</h2>
+    <ul class="list-group">
+   @try{
+                 foreach(var e in  Model.TextFields)
+            {
+                 <li class="list-group-item">@e.Name: @e.Content</li>
+                }
+            }
+            catch(ArgumentNullException)
+            {
+                
+            }
+             @try{
+                 foreach(var e in  Model.DateTimeFields)
+            {
+                <li class="list-group-item">@e.Name: @e.Content</li>
+                }
+            }
+            catch(ArgumentNullException)
+            {
+                
+            }
+             @try{
+                 foreach(var e in  Model.BoolFields)
+            {
+             
+               @if(e.Content)
+            {
+                <li class="list-group-item">
+      <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" disabled id="check5" checked="checked">
+        <label class="custom-control-label" for="check5"> @e.Name</label>
+      </div>
+    </li>
+            }
+           else
+            {
+                 <li class="list-group-item">
+      <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" disabled id="check4">
+        <label class="custom-control-label" for="check4"> @e.Name</label>
+      </div>
+    </li>
+            }
+           
+        }
+            }
+            catch(ArgumentNullException)
+            {
+                
+            }
+            </ul>
+           
+
+
+
+    <!--Section: Demo-->
+    <section class="pb-4">
+  <div class="bg-white border rounded-5">
+    
+    <section class="w-100 p-4 text-center pb-4">
+      <img src="@Model.ImageURL" class="img-fluid shadow-4" alt="Wild Landscape">
+    </section>
+    
+    
+   
+   
+    
+    
+  </div>
+</section>
+
+    <!--Section: Demo-->
+
+    <!--Section: Code-->
+    <section class="collapse" id="example1">
+      <div class="pb-4">
+      
+
+
+
+
+
+  
+
+  <div class="docs-pills border mobile-hidden">
+    <div class="d-flex justify-content-between py-2" style="padding-left: .6rem;">
+      <ul class="nav nav-pills p-2">
+        
+          
+          
+          <li class="nav-item"><a class="nav-link  active show " data-mdb-toggle="tab" href="#mdb_1b02fe2761899b01233d94f97069cdef871a524a" role="tab">HTML</a></li>
+        
+      </ul>
+    </div>
+    <div class="tab-content">
+      
+        
+
+
+
+
+<div class="tab-pane fade  active show " id="mdb_1b02fe2761899b01233d94f97069cdef871a524a" role="tabpanel">
+    <div class="code-toolbar"><pre class="grey lighten-3 mb-0 line-numbers  language-html"><code class=" language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>https://mdbcdn.b-cdn.net/img/new/slides/041.webp<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>img-fluid<span class="token punctuation">"</span></span> <span class="token attr-name">alt</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>Wild Landscape<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre><div class="toolbar"><div class="toolbar-item"><button class="btn-copy-code btn btn-dark btn-sm" data-mdb-ripple-color="dark" data-mdb-ripple-unbound="true">Copy</button></div></div></div>
+</div>
+
+      
+    </div>
+  </div>
+
+  
+
+
+
+      </div>
+    </section>
+    <!--Section: Code-->
+  </section>

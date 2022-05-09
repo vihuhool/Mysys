@@ -1,67 +1,85 @@
-﻿@model Mysys.Models.Collection
+﻿@model IEnumerable<Mysys.Models.Item>
 
 @{
     ViewData["Title"] = "Details";
 }
-
-<a asp-action="CreateItem" asp-controller="Collections" asp-route-ip="@Model.Id">Add</a>
-<h1>Details</h1>
-
-<div>
-    <h4>Collection</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Theme)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Theme)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageURL)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageURL)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdditionalTextFields)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdditionalTextFields)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdditionalDateTimeFields)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdditionalDateTimeFields)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdditionalBoolFields)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdditionalBoolFields)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<div id="PlaceHolderHere"></div>
+<button type="button" class="btn btn-outline-secondary "  data-toggle="ajax-modal" data-target="#addItem" data-url="@Url.Action("CreateItem")"><i class="fa fa-plus"></i></button>
+
+<main role="main">
+
+
+    <p>
+
+
+        <div class="album py-5 bg-light">
+
+            <div class="container">
+
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-md-4">
+                            <div class="card mb-4 box-shadow">
+                                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="@item.ImageURL" data-holder-rendered="true">
+
+                                <div class="card-body">
+                                    <h3 class="card-text">@item.Name</h3>
+                                    <hr align="center" color="grey" />
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary">@Html.ActionLink("Details", "DetailsItem", new { id = item.Id })</button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary">@Html.ActionLink("Delete", "DeleteItem", new { id = item.Id }, new { @class = "compItem" })</button>
+                                        </div>
+                                        <small class="text-muted">@item.UserName</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="col-md-4">
+                        <div class="card mb-4 box-shadow">
+                            <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="https://sun9-39.userapi.com/s/v1/if2/Dg13q4NH6tHSh0H1DKZHliNSr7YZfVotsu1KoRX7xRiiy4pb46idMTsF0TMJ1Lb9xuEct1YiOn9g2HJo0m8hSMi7.jpg?size=400x225&quality=96&type=album" data-holder-rendered="true">
+
+                            <div class="card-body">
+                                <h3 class="card-text" >Sample Name</h3>
+
+
+                                <hr align="center" color="grey" />
+
+                                 <small class="text-muted">Sample UserName</small>
+                                <div id="PlaceHolderHere"></div>
+                                 
+                                <button type="button" class="btn btn-outline-light stretched-link btn-block" data-toggle="ajax-modal" data-target="#addItem" data-url="@Url.Action("CreateItem")">Add item </button>
+                                
+                               
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+</main>
+@section scripts
+{
+<script type="text/javascript">
+
+    $(function () {
+        $.ajaxSetup({ cache: false });
+       $(".compItem").click(function (e) {
+
+            e.preventDefault();
+            $.get(this.href, function (data) {
+                $('#dialogContent').html(data);
+                $('#modDialog').modal('show');
+            });
+        });
+    })
+</script>
+}

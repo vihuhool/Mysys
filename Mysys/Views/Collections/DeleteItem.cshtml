@@ -1,0 +1,21 @@
+﻿
+@model Mysys.Models.Item
+@{
+    ViewBag.Title = "Удаление itema";
+}
+<div class="modal-content">
+    <div class="modal-header">
+         <h5 class="modal-title">Want to delete?</h5>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div>
+        <form asp-controller="Collections" asp-action="DeleteItem" method="post">
+            <div class="modal-body" align="center" >
+                <input type="submit" class="btn btn-outline-danger" value="Confirm" />
+            </div>
+        </form>
+    </div>
+</div>

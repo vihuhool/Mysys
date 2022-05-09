@@ -11,7 +11,11 @@ namespace Mysys.Models
         public int Id { get; set; }
         public string ImageURL { get; set; }
         public string Name { get; set; }
-
+        public string UserName { get; set; }
+        [ForeignKey("UserName")]
+        public string UserID { get; set; }
+        [ForeignKey("UserID")]
+        public virtual User User { get; set; }
         public virtual ICollection<TextField> TextFields { get; set; }
         public virtual ICollection<DateTimeField> DateTimeFields { get; set; }
         public virtual ICollection<BoolField> BoolFields { get; set; }

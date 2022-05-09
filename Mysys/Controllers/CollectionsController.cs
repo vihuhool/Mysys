@@ -12,9 +12,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 using static Mysys.Models.Collection;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mysys.Controllers
 {
+    [Authorize]
     public class CollectionsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -35,30 +37,29 @@ namespace Mysys.Controllers
         // GET: Collections
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Collections.Include(c => c.User);
+            var currentUser = await _userManager.GetUserAsync(User);
+            var applicationDbContext = _context.Collections.Include(c => c.User).Where(m=>m.UserID==currentUser.Id);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Collections/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-
+            if (id != null)
             {
+                GlobalVariables.myid = id;
+
+                System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
+                foreach (var item in _context.Items.Where(m => m.CollectionID == id))
+                {
+                    if (item.Name == null) _context.Items.Remove(item);
+                    else items.Add(item);
+                }
+                await _context.SaveChangesAsync();
                 
-                return NotFound();
+                return View(items);
             }
-
-            var collection = await _context.Collections
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            GlobalVariables.myid = id;
-            if (collection == null)
-            {
-                return NotFound();
-            }
-
-            return View(collection);
+            return NotFound();
         }
 
         // GET: Collections/Create
@@ -204,9 +205,14 @@ namespace Mysys.Controllers
         public async Task<IActionResult> CreateItem(int id)
         {
             id = GlobalVariables.myid;
-            _logger.LogInformation(id.ToString());
+            
             var item = new Item();
             item.CollectionID = id;
+            var currentUser = await _userManager.GetUserAsync(User);
+            item.UserID = await _userManager.GetUserIdAsync(currentUser);
+            item.UserName= await _userManager.GetUserNameAsync(currentUser);
+            //_logger.LogInformation(item.ToString());
+
             _context.Items.Add(item);
 
             await _context.SaveChangesAsync();
@@ -238,7 +244,117 @@ namespace Mysys.Controllers
             await _context.SaveChangesAsync();
 
 
+            return PartialView(item);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateItem([Bind("Id,ImageURL,Name,CollectionID,UserID,UserName")] Item newitem,
+            IFormCollection document)
+        {
+           
+            if (ModelState.IsValid)
+            {
+
+                string textval = document["Text"].ToString();
+                string boolval = document["Bool"].ToString();
+                string dateval = document["Date"].ToString();
+                string[] textsubs = textval.Split(',');
+                string[] boolsubs = boolval.Split(',');
+                string[] datesubs = dateval.Split(',');
+                
+                int i = 0;
+                foreach (var add in _context.TextFields.Where(m => m.ItemId == newitem.Id))
+                {
+                    add.Content = textsubs[i];
+                }
+                i = 0;
+                foreach (var add in _context.BoolFields.Where(m => m.ItemId == newitem.Id))
+                {
+
+                    if(boolsubs[i]=="false")
+                    add.Content =false;
+                    else add.Content = true;
+                    i++;
+                }
+                i = 0;
+                foreach (var add in _context.DateTimeFields.Where(m => m.ItemId == newitem.Id))
+                {
+                    add.Content = DateTime.Parse(datesubs[i]);
+                }
+
+
+                _context.Update(newitem);
+                  await _context.SaveChangesAsync();
+                System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
+                foreach (var item in _context.Items.Where(m => m.CollectionID == newitem.CollectionID))
+                {
+                    if (item.Name == null) _context.Items.Remove(item);
+                    else items.Add(item);
+                }
+                await _context.SaveChangesAsync();
+                return View("Details", items);
+
+
+                return RedirectToAction(nameof(Index));
+
+            }
             return View();
+        }
+
+        [HttpGet]
+        [ActionName("DeleteItem")]
+        public async Task<IActionResult> ConfirmDelete(int? id)
+        {
+            if (id != null)
+            {
+                Item user = await _context.Items.FirstOrDefaultAsync(p => p.Id == id);
+                if (user != null)
+                    return PartialView(user);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteItem(int? id)
+        {
+            //_logger.LogInformation(id.ToString());
+            var ans = await _context.Items.FirstOrDefaultAsync(p => p.Id == id);
+            
+            
+            if (id != null)
+            {
+                Item user = await _context.Items.FirstOrDefaultAsync(p => p.Id == id);
+                if (user != null)
+                {
+                   _context.Items.Remove(user);
+                    await _context.SaveChangesAsync();
+
+                    System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
+                    foreach (var item in _context.Items.Where(m => m.CollectionID == ans.CollectionID))
+                    {
+                        if (item.Name == null) { _context.Items.Remove(item);  }
+                        else items.Add(item);
+                    }
+                    await _context.SaveChangesAsync();
+                    return View("Details",items);
+                }
+            }
+            return NotFound();
+        }
+
+        public async Task<IActionResult> DetailsItem(int? id)
+        {
+            if (id != null)
+            {
+
+                Item user = await _context.Items.Include(p=>p.TextFields)
+                    .Include(p=>p.DateTimeFields)
+                    .Include(p=>p.BoolFields)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if (user != null)
+                    return View(user);
+            }
+            return NotFound();
         }
 
         private bool CollectionExists(int id)

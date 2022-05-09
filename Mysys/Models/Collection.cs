@@ -11,15 +11,36 @@ namespace Mysys.Models
     {
         public enum Themes
         {
-            Stamps,
-            Coins,
-            Pins,
-            Vinyl,
-            Comic,
-            Wine,
-            Cards,
-            Toys,
-            Other
+           Displates,
+           Stamps,
+           Coins,
+           Cards,
+           Vinyl,
+           Comic,
+           Posters,
+           Dolls,
+           Toys,
+           Funko,
+           Figures,
+           Cars,
+           Tableware,
+           Magnets,
+           Autographs,
+           Bookmarks,
+           Books,
+           Candys,
+           Plants,
+           Postcards,
+           Magazines,
+           Cans,
+           Bottles,
+           Tattoos,
+           Lighters,
+           Ashtrays,
+           Photos,
+           Clocks,
+           Anime,
+           Pens
         }
 
         public enum Fields

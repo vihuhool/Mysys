@@ -2,28 +2,104 @@
 @model Mysys.Models.Item
 
 @{
-    
-    //ViewData["Title"] = "Create";
-    var Data = ViewBag.Context as ApplicationDbContext;
+
+    ViewData["Title"] = "CreateItem";
+    //  var Data = ViewBag.Context as ApplicationDbContext;
 }
-
-<h1>Create</h1>
-
-<h4>Collection</h4>
-<hr />
-<div class="row">
-    <div class="col-md-10">
-        <form asp-action="CreateItem">
+<div class="modal fade" id="addItem">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addItemLabel">Add Item</h4>
+              
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>x</span>
+                </button>
+                 </div>
+                <div class="modal-body">
+                    <form asp-action="CreateItem">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" required/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+             <input type="hidden" asp-for="CollectionID" />
+             <input type="hidden" asp-for="UserID" />
+             <input type="hidden" asp-for="UserName" />
+            <div class="form-group">
+                <label asp-for="ImageURL" class="control-label"></label>
+                <input asp-for="ImageURL" class="form-control" required/>
+                <span asp-validation-for="ImageURL" class="text-danger"></span>
+            </div>
+           
+             @try{
+                 foreach(var e in  Model.TextFields.Where(t=>t.ItemId==Model.Id))
+            {
+                 <div class="form-group">
+                 <label  class="control-label">@e.Name</label>
+                 <input  name="Text"  class="form-control" required />
+                    </div>
+                }
+            }
+            catch(ArgumentNullException)
+            {
+                
+            }
+            @try{
+                 foreach(var e in  Model.BoolFields.Where(t=>t.ItemId==Model.Id))
+            {
+                 <div class="form-group">
+                 <label  class="control-label">@e.Name</label>
+                 <input type="checkbox" class="form-control" id="@e.Id" onclick="check(@e.Id)"  />
+                 <input type="hidden" name="Bool" id="@(e.Id)val" value="false" />
+                    </div>
+                }
+            }
+            catch(ArgumentNullException)
+            {
+                
+            }
+             @try{
+                 foreach(var e in  Model.DateTimeFields.Where(t=>t.ItemId==Model.Id))
+            {
+                 <div class="form-group">
+                 <label  class="control-label">@e.Name</label>
+                 <input  name="Date"  type="date" class="form-control" required />
+                    </div>
+                }
+            }
+            catch(ArgumentNullException)
+            {
+                
+            }
+
+             <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            
+            
             
              </form>
-            </div>
-            </div>
-            
-
+                </div>
+                
            
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function check(id) {
+    let checkbox = document.getElementById(id)
+    if (checkbox.checked) {
+    document.getElementById(id + "val").value = "true";
+    } else {
+    document.getElementById(id + "val").value = "false";
+    }
+    }
+</script>
+

@@ -18,7 +18,6 @@ namespace Mysys.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Item> Items { get; set; }
-
         public DbSet<Add> Adds { get; set; }
         public DbSet<TextField> TextFields { get; set; }
         public DbSet<DateTimeField> DateTimeFields { get; set; }
