@@ -11,80 +11,94 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="addItemLabel">Add Item</h4>
-              
+
                 <button type="button" class="close" data-dismiss="modal">
                     <span>x</span>
                 </button>
-                 </div>
-                <div class="modal-body">
-                    <form asp-action="CreateItem">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" required/>
-                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-             <input type="hidden" asp-for="CollectionID" />
-             <input type="hidden" asp-for="UserID" />
-             <input type="hidden" asp-for="UserName" />
-            <div class="form-group">
-                <label asp-for="ImageURL" class="control-label"></label>
-                <input asp-for="ImageURL" class="form-control" required/>
-                <span asp-validation-for="ImageURL" class="text-danger"></span>
-            </div>
-           
-             @try{
-                 foreach(var e in  Model.TextFields.Where(t=>t.ItemId==Model.Id))
-            {
-                 <div class="form-group">
-                 <label  class="control-label">@e.Name</label>
-                 <input  name="Text"  class="form-control" required />
+            <div class="modal-body">
+                <form asp-action="CreateItem">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
-                }
-            }
-            catch(ArgumentNullException)
-            {
-                
-            }
-            @try{
-                 foreach(var e in  Model.BoolFields.Where(t=>t.ItemId==Model.Id))
-            {
-                 <div class="form-group">
-                 <label  class="control-label">@e.Name</label>
-                 <input type="checkbox" class="form-control" id="@e.Id" onclick="check(@e.Id)"  />
-                 <input type="hidden" name="Bool" id="@(e.Id)val" value="false" />
-                    </div>
-                }
-            }
-            catch(ArgumentNullException)
-            {
-                
-            }
-             @try{
-                 foreach(var e in  Model.DateTimeFields.Where(t=>t.ItemId==Model.Id))
-            {
-                 <div class="form-group">
-                 <label  class="control-label">@e.Name</label>
-                 <input  name="Date"  type="date" class="form-control" required />
-                    </div>
-                }
-            }
-            catch(ArgumentNullException)
-            {
-                
-            }
+                    <input type="hidden" asp-for="CollectionID" />
+                    <input type="hidden" asp-for="UserID" />
+                    <input type="hidden" asp-for="UserName" />
+                    <div class="form-group" id="ImageSelector">
+                        <label class="control-label">Image</label>
+                        <small class="text-muted">(max size: 3 MB)</small>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="file-drop-area">
+                                    <input type="file" id="upload" class="form-control-file" />
+                                    <small>Drag your image here.</small>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <img id="displayimage" class="img-fluid">
+                            </div>
+                        </div>
 
-             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+
+                    @try
+                    {
+                        foreach (var e in Model.TextFields.Where(t => t.ItemId == Model.Id))
+                        {
+                            <div class="form-group">
+                                <label class="control-label">@e.Name</label>
+                                <input name="Text" class="form-control" required />
+                            </div>
+                        }
+                    }
+                    catch (ArgumentNullException)
+                    {
+
+                    }
+                    @try
+                    {
+                        foreach (var e in Model.BoolFields.Where(t => t.ItemId == Model.Id))
+                        {
+                            <div class="form-group">
+                                <label class="control-label">@e.Name</label>
+                                <input type="checkbox" class="form-control" id="@e.Id" onclick="check(@e.Id)" />
+                                <input type="hidden" name="Bool" id="@(e.Id)val" value="false" />
+                            </div>
+                        }
+                    }
+                    catch (ArgumentNullException)
+                    {
+
+                    }
+                    @try
+                    {
+                        foreach (var e in Model.DateTimeFields.Where(t => t.ItemId == Model.Id))
+                        {
+                            <div class="form-group">
+                                <label class="control-label">@e.Name</label>
+                                <input name="Date" type="date" class="form-control" required />
+                            </div>
+                        }
+                    }
+                    catch (ArgumentNullException)
+                    {
+
+                    }
+
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+
+
+
+                </form>
             </div>
-            
-            
-            
-             </form>
-                </div>
-                
-           
+
+
         </div>
     </div>
 </div>
@@ -101,5 +115,55 @@
     document.getElementById(id + "val").value = "false";
     }
     }
+
 </script>
 
+<script>
+    $(document).ready(function () {
+    let onchange = function () {
+    let _this = $(this)[0];
+    let frmdata = new FormData();
+    if (_this.files[0].size > 3145728) {
+    imageAlert();
+    _this.value = "";
+    return;
+    }
+    frmdata.append('File', _this.files[0]);
+    $.ajax({
+    method: 'POST',
+    url: '/Collections/UploadImage',
+    data: frmdata,
+    processData: false,
+    contentType: false,
+    });
+    console.log("posted");
+    };
+    function readURL(input) {
+    console.log(input);
+    if (input.files && input.files[0] && input.files[0].size < 3145728) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+    $('#displayimage').attr('src', e.target.result);
+    }
+    reader.readAsDataURL(input.files[0]);
+    }
+    }
+    $(document).on('change', 'input[type=file]', onchange);
+    $("#upload").change(function () {
+    readURL(this);
+    console.log("changed");
+    });
+
+    });
+</script>
+
+<script>
+    function imageAlert() {
+    let docFrag = document.createDocumentFragment();
+    let tempNode = document.querySelector("div[data-type='alert-template']").cloneNode(true);
+    tempNode.style.display = "block";
+    docFrag.appendChild(tempNode);
+    document.getElementById("ImageSelector").appendChild(docFrag);
+    delete docFrag;
+    }
+</script>

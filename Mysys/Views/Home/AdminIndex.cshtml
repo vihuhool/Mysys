@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Mysys.Models.Collection>
+
+@{
+
+    ViewData["Title"] = "Index";
+}
+
+<main role="main">
+     <p>
+                <button class="btn  btn-outline-secondary" onclick="location.href='@Url.Action("Create", "Collections")'"><i class="fa fa-plus"></i></button>
+
+    <div class="album py-5 bg-light">
+
+        <div class="container">
+
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="card mb-4 box-shadow">
+                            <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="@item.ImageURL" data-holder-rendered="true">
+                            <div class="card-body">
+                                <h4>@item.Name</h4>
+                                 
+                                <small>@item.Theme</small>
+                             
+                                <hr align="center" color="grey" />
+                                <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@item.Description</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="location.href='@Url.Action("Details", "Collections", new { id = item.Id})'">View</button>
+                                        
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="location.href='@Url.Action("Delete", "Collections", new { id = item.Id})'">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                 <div class="col-md-4">
+                        <div class="card mb-4 box-shadow">
+                            <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="https://sun9-39.userapi.com/s/v1/if2/Dg13q4NH6tHSh0H1DKZHliNSr7YZfVotsu1KoRX7xRiiy4pb46idMTsF0TMJ1Lb9xuEct1YiOn9g2HJo0m8hSMi7.jpg?size=400x225&quality=96&type=album" data-holder-rendered="true">
+
+                            <div class="card-body">
+                                <h4 class="card-text" >Sample Name</h4>
+                                <small>Sample Theme</small>
+                                   <hr align="center" color="grey" />
+                                    <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Sample description</p>
+
+
+                               
+
+
+                                <div id="PlaceHolderHere"></div>
+                                <button class="btn btn-outline-light stretched-link btn-block" onclick="location.href='@Url.Action("Create", "Collections")'">Add new collection</button>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+    </div>
+</main>

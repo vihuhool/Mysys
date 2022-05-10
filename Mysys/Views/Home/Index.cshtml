@@ -27,12 +27,13 @@
                                 <hr align="center" color="grey" />
                                 <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@item.Description</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div class="btn-group">
-                                        <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="location.href='@Url.Action("Details", "Home", new { id = item.Id})'">View</button>
+                                        
+                                            <div class="btn-group">
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary" onclick="location.href='@Url.Action("Details", "Home", new { id = item.Id})'">View</button>
+
+                                            </div>
                                         
                                     </div>
-                                    
-                                </div>
                             </div>
                         </div>
                     </div>

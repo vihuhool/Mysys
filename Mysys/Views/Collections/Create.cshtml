@@ -14,7 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" required/>
+                <input asp-for="Name" class="form-control" required />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -27,21 +27,31 @@
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            <div class="form-group" id="ImageSelector">
+                <label class="control-label">Image</label>
+                <small class="text-muted">(max size: 3 MB)</small>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="file-drop-area">
+                            <input type="file" id="upload" class="form-control-file" />
+                            <small>Drag your image here.</small>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <img id="displayimage" class="img-fluid">
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="ImageURL" class="control-label">Image</label>
-                <input asp-for="ImageURL" class="form-control" />
-                <span asp-validation-for="ImageURL" class="text-danger"></span>
             </div>
 
             <br />
             <div class="container">
                 <div class="container" id="Fields">
-
-                        </div>
+                </div>
                 <div class="form-group col-md-12">
-                    <label>You can add multiple fields to all items in your collection. 
-                    
+                    <label>
+                        You can add multiple fields to all items in your collection.
+
                     </label>
                     <div class="row" id="FieldSelector">
                         <div class="col-md-4">
@@ -74,25 +84,57 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    <script>
+    $(document).ready(function () {
+    let onchange = function () {
+    let _this = $(this)[0];
+    let frmdata = new FormData();
+    if (_this.files[0].size > 3145728) {
+    imageAlert();
+    _this.value = "";
+    return;
+    }
+    frmdata.append('File', _this.files[0]);
+    $.ajax({
+    method: 'POST',
+    url: '/Collections/UploadImage',
+    data: frmdata,
+    processData: false,
+    contentType: false,
+    });
+    console.log("posted");
+    };
+    function readURL(input) {
+    console.log(input);
+    if (input.files && input.files[0] && input.files[0].size < 3145728) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+    $('#displayimage').attr('src', e.target.result);
+    }
+    reader.readAsDataURL(input.files[0]);
+    }
+    }
+    $(document).on('change', 'input[type=file]', onchange);
+    $("#upload").change(function () {
+    readURL(this);
+    console.log("changed");
+    });
 
+    });
+</script>
 
-<div style="display: none" data-type="field-template" class="container">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-default"></span>
-        </div>
-        <input type="hidden" name="fieldType" />
-         <input type="hidden" name="fieldName"/>
-       
-        <div class="input-group-append">
-            <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.parentNode.parentNode.remove()">Delete</button>
-        </div>
-    </div>
-    </div>
-
-
+<script>
+    function imageAlert() {
+    let docFrag = document.createDocumentFragment();
+    let tempNode = document.querySelector("div[data-type='alert-template']").cloneNode(true);
+    tempNode.style.display = "block";
+    docFrag.appendChild(tempNode);
+    document.getElementById("ImageSelector").appendChild(docFrag);
+    delete docFrag;
+    }
+</script>
 <script>
     function addField() {
         let fieldName = document.getElementById("fieldName").value;
@@ -128,3 +170,22 @@
         delete docFrag;
     }
 </script>
+
+}
+}
+
+
+<div style="display: none" data-type="field-template" class="container">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default"></span>
+        </div>
+        <input type="hidden" name="fieldType" />
+        <input type="hidden" name="fieldName" />
+
+        <div class="input-group-append">
+            <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.parentNode.parentNode.remove()">Delete</button>
+        </div>
+    </div>
+</div>
+

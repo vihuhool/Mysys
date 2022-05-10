@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace Mysys.Controllers
 {
-   
 
-        public class HomeController : Controller
-        {
+
+    public class HomeController : Controller
+    {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ApplicationDbContext context, UserManager<IdentityUser> userManager,
+        public HomeController(ApplicationDbContext context, UserManager<User> userManager,
            ILogger<HomeController> logger)
         {
             _context = context;
@@ -28,22 +28,37 @@ namespace Mysys.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            var applicationDbContext = _context.Collections;
+            
+                var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
             {
-          
-            return View(_context.Collections);
+                return View(await applicationDbContext.ToListAsync());
+            }
+            else
+            {
+                if (currentUser.RoleId == "1")
+                {
+                    return View("AdminIndex", await applicationDbContext.ToListAsync());
+                }
+                else return View(await applicationDbContext.ToListAsync());
+            }
+
         }
 
-            public IActionResult Privacy()
-            {
-                return View();
-            }
 
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-            public IActionResult Error()
-            {
-                return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-            }
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
         public async Task<IActionResult> DetailsItem(int? id)
         {
             if (id != null)
@@ -62,7 +77,7 @@ namespace Mysys.Controllers
         {
             if (id != null)
             {
-                
+
 
                 System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
                 foreach (var item in _context.Items.Where(m => m.CollectionID == id))

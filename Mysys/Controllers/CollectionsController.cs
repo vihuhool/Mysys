@@ -13,6 +13,10 @@ using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 using static Mysys.Models.Collection;
 using Microsoft.AspNetCore.Authorization;
+using Firebase.Storage;
+using System.Threading;
+using Firebase.Auth;
+using System.IO;
 
 namespace Mysys.Controllers
 {
@@ -20,25 +24,65 @@ namespace Mysys.Controllers
     public class CollectionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Models.User> _userManager;
         private readonly ILogger<CollectionsController> _logger;
+
+        private readonly string apiKey =  "AIzaSyAcj9ybqBveF5DwSxpryQoerbarAI9fk4w";
+        private readonly string storageBucket = "mysys-e8594.appspot.com";
+        private readonly string login = "kirillmoiseev76@gmail.com";
+        private readonly string password =  "Zaraza_11";
         public static class GlobalVariables
         {
             public static int myid { get; set; }
         }
-        public CollectionsController(ApplicationDbContext context, UserManager<IdentityUser> userManager,
+        public CollectionsController(ApplicationDbContext context, UserManager<Models.User> userManager,
             ILogger<CollectionsController> logger)
         {
             _context = context;
             _userManager = userManager;
             _logger = logger;
         }
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            var fileUpload = file;
+            if (fileUpload.Length > 0)
+            {
+                Stream stream = fileUpload.OpenReadStream();
+
+                var auth = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
+                var signIn = await auth.SignInWithEmailAndPasswordAsync(login, password);
+
+                var cancellation = new CancellationTokenSource();
+
+                var upload = new FirebaseStorage(
+                storageBucket,
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(signIn.FirebaseToken),
+                    ThrowOnCancel = true
+                }
+                )
+                .Child($"images")
+                .Child($"{DateTime.Now}".Replace("/", "."))
+                .PutAsync(stream, cancellation.Token);
+
+                string link = await upload;
+                TempData["imageurl"] = link;
+                
+                _logger.LogInformation(link);
+                return Ok();
+            }
+            return BadRequest();
+        }
 
         // GET: Collections
         public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            var applicationDbContext = _context.Collections.Include(c => c.User).Where(m=>m.UserID==currentUser.Id);
+            _logger.LogInformation(currentUser.Id.ToString());
+            var applicationDbContext = _context.Collections.Include(c => c.User).Where(i=>i.UserID==currentUser.Id);
+            
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -65,7 +109,8 @@ namespace Mysys.Controllers
         // GET: Collections/Create
         public IActionResult Create()
         {
-            ViewData["UserID"] = new SelectList(_context.Set<User>(), "Id", "Id");
+            ViewData["UserID"] = new SelectList(_context.Set<Models.User>(), "Id", "Id");
+            TempData["imageurl"] = null;
             return View();
         }
 
@@ -89,7 +134,7 @@ namespace Mysys.Controllers
                 collection.AdditionalTextFields = textFields;
                 collection.AdditionalDateTimeFields = dateTimeFields;
                 collection.AdditionalBoolFields = boolFields;
-                
+                if (TempData["imageurl"] != null) collection.ImageURL = TempData["imageurl"].ToString();
 
                 _context.Add(collection);
                 await _context.SaveChangesAsync();
@@ -132,7 +177,7 @@ namespace Mysys.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserID"] = new SelectList(_context.Set<User>(), "Id", "Id", collection.UserID);
+            ViewData["UserID"] = new SelectList(_context.Set<Models.User>(), "Id", "Id", collection.UserID);
             return View(collection);
         }
 
@@ -168,7 +213,7 @@ namespace Mysys.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserID"] = new SelectList(_context.Set<User>(), "Id", "Id", collection.UserID);
+            ViewData["UserID"] = new SelectList(_context.Set<Models.User>(), "Id", "Id", collection.UserID);
             return View(collection);
         }
 
@@ -205,7 +250,7 @@ namespace Mysys.Controllers
         public async Task<IActionResult> CreateItem(int id)
         {
             id = GlobalVariables.myid;
-            
+            TempData["imageurl"] = null;
             var item = new Item();
             item.CollectionID = id;
             var currentUser = await _userManager.GetUserAsync(User);
@@ -255,23 +300,21 @@ namespace Mysys.Controllers
             if (ModelState.IsValid)
             {
 
-                string textval = document["Text"].ToString();
-                string boolval = document["Bool"].ToString();
-                string dateval = document["Date"].ToString();
-                string[] textsubs = textval.Split(',');
-                string[] boolsubs = boolval.Split(',');
-                string[] datesubs = dateval.Split(',');
+                string[] textval = document["Text"];
+                string[] boolval = document["Bool"];
+                string[] dateval = document["Date"];
+             
                 
                 int i = 0;
                 foreach (var add in _context.TextFields.Where(m => m.ItemId == newitem.Id))
                 {
-                    add.Content = textsubs[i];
+                    add.Content = textval[i];
                 }
                 i = 0;
                 foreach (var add in _context.BoolFields.Where(m => m.ItemId == newitem.Id))
                 {
 
-                    if(boolsubs[i]=="false")
+                    if(boolval[i]=="false")
                     add.Content =false;
                     else add.Content = true;
                     i++;
@@ -279,9 +322,9 @@ namespace Mysys.Controllers
                 i = 0;
                 foreach (var add in _context.DateTimeFields.Where(m => m.ItemId == newitem.Id))
                 {
-                    add.Content = DateTime.Parse(datesubs[i]);
+                    add.Content = DateTime.Parse(dateval[i]);
                 }
-
+                if (TempData["imageurl"] != null) newitem.ImageURL = TempData["imageurl"].ToString();
 
                 _context.Update(newitem);
                   await _context.SaveChangesAsync();
