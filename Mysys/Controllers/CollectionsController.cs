@@ -89,21 +89,20 @@ namespace Mysys.Controllers
         // GET: Collections/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id != null)
-            {
+          
                 GlobalVariables.myid = id;
 
-                System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
-                foreach (var item in _context.Items.Where(m => m.CollectionID == id))
-                {
-                    if (item.Name == null) _context.Items.Remove(item);
-                    else items.Add(item);
-                }
-                await _context.SaveChangesAsync();
-                
-                return View(items);
+            // var items= _context.Items.Include(c => c.Collection).Where(m => m.CollectionID == id);
+            Collection collection = await _context.Collections.Include(e => e.Items).FirstOrDefaultAsync(i=>i.Id==id);
+            foreach (var item in _context.Items.Where(m => m.CollectionID == id))
+            {
+                if (item.Name == null) _context.Items.Remove(item);
             }
-            return NotFound();
+            await _context.SaveChangesAsync();
+
+            return  View(collection);
+            
+            
         }
 
         // GET: Collections/Create
@@ -249,10 +248,12 @@ namespace Mysys.Controllers
        
         public async Task<IActionResult> CreateItem(int id)
         {
-            id = GlobalVariables.myid;
+            _logger.LogInformation(id.ToString());
+           // id = GlobalVariables.myid;
             TempData["imageurl"] = null;
             var item = new Item();
             item.CollectionID = id;
+            
             var currentUser = await _userManager.GetUserAsync(User);
             item.UserID = await _userManager.GetUserIdAsync(currentUser);
             item.UserName= await _userManager.GetUserNameAsync(currentUser);
@@ -287,8 +288,8 @@ namespace Mysys.Controllers
                 }
             }
             await _context.SaveChangesAsync();
-
-
+            //_logger.LogInformation(item.Id.ToString());
+           
             return PartialView(item);
         }
         [HttpPost]
@@ -296,19 +297,20 @@ namespace Mysys.Controllers
         public async Task<IActionResult> CreateItem([Bind("Id,ImageURL,Name,CollectionID,UserID,UserName")] Item newitem,
             IFormCollection document)
         {
-           
+            
             if (ModelState.IsValid)
             {
-
+                _logger.LogInformation(newitem.Id.ToString());
                 string[] textval = document["Text"];
                 string[] boolval = document["Bool"];
                 string[] dateval = document["Date"];
-             
-                
+               
+
                 int i = 0;
                 foreach (var add in _context.TextFields.Where(m => m.ItemId == newitem.Id))
                 {
                     add.Content = textval[i];
+                    i++;
                 }
                 i = 0;
                 foreach (var add in _context.BoolFields.Where(m => m.ItemId == newitem.Id))
@@ -323,22 +325,16 @@ namespace Mysys.Controllers
                 foreach (var add in _context.DateTimeFields.Where(m => m.ItemId == newitem.Id))
                 {
                     add.Content = DateTime.Parse(dateval[i]);
+                    i++;
                 }
                 if (TempData["imageurl"] != null) newitem.ImageURL = TempData["imageurl"].ToString();
 
                 _context.Update(newitem);
                   await _context.SaveChangesAsync();
-                System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
-                foreach (var item in _context.Items.Where(m => m.CollectionID == newitem.CollectionID))
-                {
-                    if (item.Name == null) _context.Items.Remove(item);
-                    else items.Add(item);
-                }
-                await _context.SaveChangesAsync();
-                return View("Details", items);
 
 
-                return RedirectToAction(nameof(Index));
+                Collection collection = await _context.Collections.Include(e => e.Items).FirstOrDefaultAsync(i => i.Id == newitem.CollectionID);
+                return RedirectToAction("Details", collection);
 
             }
             return View();
@@ -372,14 +368,10 @@ namespace Mysys.Controllers
                    _context.Items.Remove(user);
                     await _context.SaveChangesAsync();
 
-                    System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
-                    foreach (var item in _context.Items.Where(m => m.CollectionID == ans.CollectionID))
-                    {
-                        if (item.Name == null) { _context.Items.Remove(item);  }
-                        else items.Add(item);
-                    }
-                    await _context.SaveChangesAsync();
-                    return View("Details",items);
+                    var items = _context.Items.Where(c => c.CollectionID == ans.CollectionID);
+                    Collection collection = await _context.Collections.Include(e => e.Items).FirstOrDefaultAsync(i => i.Id == ans.CollectionID);
+
+                    return RedirectToAction("Details", collection);
                 }
             }
             return NotFound();

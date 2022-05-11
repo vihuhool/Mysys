@@ -6,6 +6,7 @@
     ViewData["Title"] = "CreateItem";
     //  var Data = ViewBag.Context as ApplicationDbContext;
 }
+
 <div class="modal fade" id="addItem">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -19,7 +20,7 @@
             <div class="modal-body">
                 <form asp-action="CreateItem">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Id" value=@Model.Id/>
                     <div class="form-group">
                         <label asp-for="Name" class="control-label"></label>
                         <input asp-for="Name" class="form-control" required />
