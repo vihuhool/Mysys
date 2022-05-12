@@ -31,10 +31,7 @@ namespace Mysys.Controllers
         private readonly string storageBucket = "mysys-e8594.appspot.com";
         private readonly string login = "kirillmoiseev76@gmail.com";
         private readonly string password =  "Zaraza_11";
-        public static class GlobalVariables
-        {
-            public static int myid { get; set; }
-        }
+      
         public CollectionsController(ApplicationDbContext context, UserManager<Models.User> userManager,
             ILogger<CollectionsController> logger)
         {
@@ -90,7 +87,7 @@ namespace Mysys.Controllers
         public async Task<IActionResult> Details(int id)
         {
           
-                GlobalVariables.myid = id;
+              
 
             // var items= _context.Items.Include(c => c.Collection).Where(m => m.CollectionID == id);
             Collection collection = await _context.Collections.Include(e => e.Items).FirstOrDefaultAsync(i=>i.Id==id);

@@ -17,5 +17,6 @@ namespace Mysys.Models
         public virtual Role Role { get; set; }
         public virtual ICollection<Collection> Collections { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
+        public bool Status { get; set; }
     }
 }
