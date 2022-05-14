@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "@forevolve/bootstrap-dark": "^2.1.0"
+    "@forevolve/bootstrap-dark": "^2.1.0",
+    "bootstrap-darkmode": "^0.9.1",
+    "bootswatch": "^5.1.3"
   }
 }

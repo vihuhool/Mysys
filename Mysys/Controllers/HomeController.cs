@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,7 @@ namespace Mysys.Controllers
             _logger = logger;
         }
 
+
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Collections;
@@ -48,7 +50,15 @@ namespace Mysys.Controllers
 
         }
 
-
+        [HttpPost]
+        public IActionResult SetTheme(string data)
+        {
+            CookieOptions cookies = new CookieOptions();
+            cookies.Expires = DateTime.Now.AddDays(1);
+            _logger.LogInformation(data.ToString());
+            Response.Cookies.Append("theme", data, cookies);
+            return Ok();
+        }
         public IActionResult Privacy()
         {
             return View();

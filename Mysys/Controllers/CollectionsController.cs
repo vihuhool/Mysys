@@ -65,9 +65,11 @@ namespace Mysys.Controllers
                 .PutAsync(stream, cancellation.Token);
 
                 string link = await upload;
-                TempData["imageurl"] = link;
+                var currentUser = await _userManager.GetUserAsync(User);
                 
-                _logger.LogInformation(link);
+                TempData["imageurl"+currentUser.Id] = link;
+                
+                _logger.LogInformation("imageurl" + currentUser.Id);
                 return Ok();
             }
             return BadRequest();
@@ -106,7 +108,8 @@ namespace Mysys.Controllers
         public IActionResult Create()
         {
             ViewData["UserID"] = new SelectList(_context.Set<Models.User>(), "Id", "Id");
-            TempData["imageurl"] = null;
+            var currentUser = _userManager.GetUserAsync(User);
+            TempData["imageurl" + currentUser.Id] = null;
             return View();
         }
 
@@ -130,7 +133,8 @@ namespace Mysys.Controllers
                 collection.AdditionalTextFields = textFields;
                 collection.AdditionalDateTimeFields = dateTimeFields;
                 collection.AdditionalBoolFields = boolFields;
-                if (TempData["imageurl"] != null) collection.ImageURL = TempData["imageurl"].ToString();
+              
+                if (TempData["imageurl"+currentUser.Id] != null) collection.ImageURL = TempData["imageurl"+currentUser.Id].ToString();
 
                 _context.Add(collection);
                 await _context.SaveChangesAsync();
@@ -246,12 +250,13 @@ namespace Mysys.Controllers
         public async Task<IActionResult> CreateItem(int id)
         {
             _logger.LogInformation(id.ToString());
-           // id = GlobalVariables.myid;
-            TempData["imageurl"] = null;
+            // id = GlobalVariables.myid;
+            var currentUser = await _userManager.GetUserAsync(User);
+            TempData["imageurl"+currentUser.Id] = null;
             var item = new Item();
             item.CollectionID = id;
             
-            var currentUser = await _userManager.GetUserAsync(User);
+            
             item.UserID = await _userManager.GetUserIdAsync(currentUser);
             item.UserName= await _userManager.GetUserNameAsync(currentUser);
             //_logger.LogInformation(item.ToString());
@@ -324,7 +329,9 @@ namespace Mysys.Controllers
                     add.Content = DateTime.Parse(dateval[i]);
                     i++;
                 }
-                if (TempData["imageurl"] != null) newitem.ImageURL = TempData["imageurl"].ToString();
+                var currentUser = await _userManager.GetUserAsync(User);  
+                _logger.LogInformation("imageurl"+currentUser.Id);
+                if (TempData["imageurl"+currentUser.Id] != null) newitem.ImageURL = TempData["imageurl"+currentUser.Id].ToString();
 
                 _context.Update(newitem);
                   await _context.SaveChangesAsync();
@@ -336,6 +343,7 @@ namespace Mysys.Controllers
             }
             return View();
         }
+       
 
         [HttpGet]
         [ActionName("DeleteItem")]

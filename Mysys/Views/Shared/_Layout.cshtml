@@ -1,12 +1,45 @@
-﻿
+﻿@inject IHttpContextAccessor httpContextAccessor
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AuthSystem</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+ 
+    @{
+
+        if (httpContextAccessor.HttpContext.Request.Cookies["theme"]!=null)
+        {
+            var theme = httpContextAccessor.HttpContext.Request.Cookies["theme"].ToString();
+            if (theme =="Light")
+        {
+            <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        }
+        if (theme=="Dark")
+        {
+                
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-cyb.min.css" />
+            }
+            if (theme=="Morph")
+        {
+                
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-morph.min.css" />
+            }
+        }
+
+        else
+        {
+             <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        }
+        }
+
+   
+    
     <link rel="stylesheet" href="~/css/site.css" />
+   
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +63,67 @@
                     <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Collections" asp-action="Index">Collections</a>
                         </li>
+                       
+                </ul>
+                
+                @{
+
+        if (httpContextAccessor.HttpContext.Request.Cookies["theme"]!=null)
+        {
+            var theme = httpContextAccessor.HttpContext.Request.Cookies["theme"].ToString();
+            if (theme =="Light")
+        {
+           <div class ="row text-right">
+                            <select name="theme" id = "theme">
+                              
+                                <option value="0">Light</option>
+                                <option value="1">Dark</option>
+                                <option value="2">Morph</option>
+
+                            </select>
+                        </div>
+        }
+        if (theme=="Dark")
+        {
+                <div class ="row text-right">
+                            <select name="theme" id = "theme">
+                                
+                                
+                                <option value="0">Dark</option>
+                                <option value="1">Light</option>
+                                <option value="2">Morph</option>
+                            </select>
+                        </div>
+            }
+             if (theme=="Morph")
+        {
+                <div class ="row text-right">
+                            <select name="theme" id = "theme">
+                                
+                                
+                                <option value="0">Morph</option>
+                                <option value="1">Light</option>
+                                <option value="2">Dark</option>
+                            </select>
+                        </div>
+            }
+        }
+
+        else
+        {
+            <div class ="row text-right">
+                            <select name="theme" id = "theme">
+                              
+                                <option value="0">Light</option>
+                                <option value="1">Dark</option>
+                                <option value="2">Morph</option>
+                            </select>
+                        </div>
+        }
+        }
+                <ul class="navbar-nav my-2 my-lg-0">
+                    <li class="nav-item">
+                        <div class="invisible">......</div>
 
                 </ul>
                 <ul class="navbar-nav my-2 my-lg-0">
@@ -38,6 +132,8 @@
 
                 </ul>
             </div>
+             
+                        
         </nav>
     </header>
     <div class="container">

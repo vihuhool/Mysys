@@ -3,6 +3,13 @@
 
 // Write your JavaScript code.
 
+$('#theme').on("change", function () {
+    var item = $("#theme option:selected").text();
+    $.post("/Home/SetTheme",
+        {
+            data: item
+        }).then(function () { window.location.reload(); });;
+});
 
 $(function () {
     var PlaceHolderElement = $('#PlaceHolderHere');
@@ -15,3 +22,5 @@ $(function () {
     })
   
 })
+
+
