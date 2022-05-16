@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Westwind.AspNetCore.Markdown;
 
 namespace Mysys
 {
@@ -29,6 +30,7 @@ namespace Mysys
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMarkdown();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -58,6 +60,7 @@ namespace Mysys
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseMarkdown();
 
             app.UseAuthentication();
             app.UseAuthorization();

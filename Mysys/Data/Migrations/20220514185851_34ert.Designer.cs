@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mysys.Data;
 
 namespace Mysys.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220514185851_34ert")]
+    partial class _34ert
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -410,9 +412,6 @@ namespace Mysys.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CollectionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -421,7 +420,7 @@ namespace Mysys.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CollectionId");
+                    b.HasIndex("ItemId");
 
                     b.ToTable("Tags");
                 });
@@ -597,9 +596,9 @@ namespace Mysys.Data.Migrations
 
             modelBuilder.Entity("Mysys.Models.Tag", b =>
                 {
-                    b.HasOne("Mysys.Models.Collection", null)
+                    b.HasOne("Mysys.Models.Item", null)
                         .WithMany("Tags")
-                        .HasForeignKey("CollectionId")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -629,8 +628,6 @@ namespace Mysys.Data.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Items");
-
-                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Mysys.Models.Item", b =>
@@ -638,6 +635,8 @@ namespace Mysys.Data.Migrations
                     b.Navigation("BoolFields");
 
                     b.Navigation("DateTimeFields");
+
+                    b.Navigation("Tags");
 
                     b.Navigation("TextFields");
                 });

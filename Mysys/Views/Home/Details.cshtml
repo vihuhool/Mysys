@@ -1,9 +1,8 @@
-﻿@model IEnumerable<Mysys.Models.Item>
+﻿@model Mysys.Models.Collection
 
 @{
     ViewData["Title"] = "Details";
 }
-
 
 <main role="main">
 
@@ -16,7 +15,7 @@
             <div class="container">
 
                 <div class="row">
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Items)
                     {
                         <div class="col-md-4">
                             <div class="card mb-4 box-shadow">
@@ -25,9 +24,22 @@
                                 <div class="card-body">
                                     <h3 class="card-text">@item.Name</h3>
                                     <hr align="center" color="grey" />
+                                     <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
+                                    @foreach(var r in Model.Tags.Where(m=>m.ItemId==item.Id))
+                                    {
+                                       string[] subs = r.Content.Split(' ');
+                                       foreach(var t in subs)
+                                        {
+                                            <button type="button" class="btn btn-outline-secondary">#@t</button>
+                                        }
+                                    }
+                                    </p>
+                                     <hr align="center" color="grey" />
+
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-sm btn-outline-secondary">@Html.ActionLink("Details", "DetailsItem", new { id = item.Id })</button>
+                                  
                                         </div>
                                         <small class="text-muted">@item.UserName</small>
                                     </div>
@@ -35,6 +47,7 @@
                             </div>
                         </div>
                     }
+                    
                 </div>
             </div>
 

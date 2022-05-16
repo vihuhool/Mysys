@@ -12,6 +12,8 @@
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
     <PackageReference Include="jQuery" Version="3.6.0" />
     <PackageReference Include="jQuery.Validation" Version="1.19.3" />
+    <PackageReference Include="Markdown" Version="2.2.1" />
+    <PackageReference Include="MarkdownSharp" Version="2.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.16" />
@@ -19,6 +21,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.16" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
     <PackageReference Include="Twitter.Bootstrap.Bootswatch.Darkly" Version="3.2.0" />
+    <PackageReference Include="westwind.aspnetcore.markdown" Version="3.8.0" />
   </ItemGroup>
 
 </Project>

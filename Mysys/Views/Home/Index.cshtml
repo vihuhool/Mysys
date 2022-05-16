@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Mysys.Models.Collection>
+﻿@using Westwind.AspNetCore.Markdown
+
+@model IEnumerable<Mysys.Models.Collection>
 
 @{
 
@@ -28,7 +30,9 @@
                                 <small>@item.Theme</small>
                              
                                 <hr align="center" color="grey" />
-                                <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@item.Description</p>
+                                
+                                <div>@Markdown.ParseHtmlString(item.Description)</div>
+                                
                                 <div class="d-flex justify-content-between align-items-center">
                                         
                                             <div class="btn-group">

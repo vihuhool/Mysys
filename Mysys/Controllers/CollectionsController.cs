@@ -17,6 +17,7 @@ using Firebase.Storage;
 using System.Threading;
 using Firebase.Auth;
 using System.IO;
+using HeyRed.MarkdownSharp;
 
 namespace Mysys.Controllers
 {
@@ -92,7 +93,7 @@ namespace Mysys.Controllers
               
 
             // var items= _context.Items.Include(c => c.Collection).Where(m => m.CollectionID == id);
-            Collection collection = await _context.Collections.Include(e => e.Items).FirstOrDefaultAsync(i=>i.Id==id);
+            Collection collection = await _context.Collections.Include(e => e.Items).Include(j=>j.Tags).FirstOrDefaultAsync(i=>i.Id==id);
             foreach (var item in _context.Items.Where(m => m.CollectionID == id))
             {
                 if (item.Name == null) _context.Items.Remove(item);
@@ -119,11 +120,13 @@ namespace Mysys.Controllers
         public async Task<IActionResult> Create([Bind("Id,Name,Description,Theme,ImageURL,AdditionalTextFields,AdditionalDateTimeFields,AdditionalBoolFields,UserID")] Collection collection,
             IFormCollection document)
         {
+           
+
             if (ModelState.IsValid)
             {
                 var currentUser = await _userManager.GetUserAsync(User);
                 string fieldTypes = document["fieldType"].ToString();
-               
+              
 
                 int textFields = Regex.Matches(fieldTypes, "TextField").Count;
                 int dateTimeFields = Regex.Matches(fieldTypes, "DateTimeField").Count;
@@ -306,7 +309,8 @@ namespace Mysys.Controllers
                 string[] textval = document["Text"];
                 string[] boolval = document["Bool"];
                 string[] dateval = document["Date"];
-               
+                string tags = document["Tags"];
+                
 
                 int i = 0;
                 foreach (var add in _context.TextFields.Where(m => m.ItemId == newitem.Id))
@@ -329,7 +333,15 @@ namespace Mysys.Controllers
                     add.Content = DateTime.Parse(dateval[i]);
                     i++;
                 }
-                var currentUser = await _userManager.GetUserAsync(User);  
+                i = 0;
+                var currentUser = await _userManager.GetUserAsync(User);
+                var item = new Tag();
+                item.ItemId = newitem.Id;
+                item.CollectionId = newitem.CollectionID;
+                item.Content = tags;
+                _context.Tags.Add(item);
+
+
                 _logger.LogInformation("imageurl"+currentUser.Id);
                 if (TempData["imageurl"+currentUser.Id] != null) newitem.ImageURL = TempData["imageurl"+currentUser.Id].ToString();
 

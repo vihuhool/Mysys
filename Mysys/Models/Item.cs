@@ -25,7 +25,7 @@ namespace Mysys.Models
         [ForeignKey("CollectionID")]
         public virtual Collection Collection { get; set; }
         
-        public virtual ICollection<Tag> Tags { get; set; }
+        
     }
     public class TextField
     {

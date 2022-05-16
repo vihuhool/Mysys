@@ -85,21 +85,14 @@ namespace Mysys.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
-            if (id != null)
+            Collection collection = await _context.Collections.Include(e => e.Items).Include(j => j.Tags).FirstOrDefaultAsync(i => i.Id == id);
+            foreach (var item in _context.Items.Where(m => m.CollectionID == id))
             {
-
-
-                System.Collections.Generic.List<Item> items = new System.Collections.Generic.List<Item>();
-                foreach (var item in _context.Items.Where(m => m.CollectionID == id))
-                {
-                    if (item.Name == null) _context.Items.Remove(item);
-                    else items.Add(item);
-                }
-                await _context.SaveChangesAsync();
-
-                return View(items);
+                if (item.Name == null) _context.Items.Remove(item);
             }
-            return NotFound();
+            await _context.SaveChangesAsync();
+
+            return View(collection);
         }
     }
 

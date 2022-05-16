@@ -70,7 +70,7 @@ namespace MyAuthApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult Submit(IFormCollection fc)
+        public async Task <IActionResult> Submit(IFormCollection fc)
         {
             string action = fc["action"];
             string[] Ids = fc["user"].ToString().Split(",");
@@ -82,13 +82,13 @@ namespace MyAuthApp.Controllers
                 case "Delete":
                     return Delete(Ids);
                 case "Block":
-                    return Block(Ids);
+                    return await Block(Ids);
                 case "Unblock":
-                    return Unblock(Ids);
+                    return await Unblock(Ids);
                 case "Admin":
-                    return Admin(Ids);
+                    return await Admin(Ids);
                 case "deAdmin":
-                    return deAdmin(Ids);
+                    return await  deAdmin(Ids);
             }
             return Redirect("Index");
         }
@@ -112,7 +112,7 @@ namespace MyAuthApp.Controllers
             return Redirect("Index");
         }
         [HttpPost]
-        public ActionResult Admin(string[] Ids)
+        public async Task <IActionResult> Admin(string[] Ids)
         {
             foreach (var Id in Ids)
             {
@@ -121,7 +121,8 @@ namespace MyAuthApp.Controllers
                 {
                     if (user.Id == Id)
                     {
-                        user.RoleId = "1";
+                        var curr = await _userManager.FindByIdAsync(Id); 
+                       curr.RoleId = "1";
                         _context.SaveChanges();
                     }
                 }
@@ -129,7 +130,7 @@ namespace MyAuthApp.Controllers
 
             return Redirect("Index");
         }
-        public ActionResult deAdmin(string[] Ids)
+        public async Task <IActionResult> deAdmin(string[] Ids)
         {
             foreach (var Id in Ids)
             {
@@ -138,7 +139,8 @@ namespace MyAuthApp.Controllers
                 {
                     if (user.Id == Id)
                     {
-                        user.RoleId = null;
+                        var curr = await _userManager.FindByIdAsync(Id);
+                        curr.RoleId = null;
                         _context.SaveChanges();
                     }
                 }
@@ -147,7 +149,7 @@ namespace MyAuthApp.Controllers
             return Redirect("Index");
         }
         [HttpPost]
-        public ActionResult Block(string[] Ids)
+        public async Task  <ActionResult> Block(string[] Ids)
         {
             foreach (var Id in Ids)
             {
@@ -156,7 +158,8 @@ namespace MyAuthApp.Controllers
                 {
                     if (user.Id == Id)
                     {
-                        user.Status = true;
+                        var cur = await _userManager.FindByIdAsync(Id);
+                        cur.Status = true;
                         _context.Update(user);
                         _context.SaveChanges();
                     }
@@ -167,7 +170,7 @@ namespace MyAuthApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult Unblock(string[] Ids)
+        public async Task  <ActionResult> Unblock(string[] Ids)
         {
 
             foreach (var Id in Ids)
@@ -177,7 +180,8 @@ namespace MyAuthApp.Controllers
                 {
                     if (user.Id == Id)
                     {
-                        user.Status = false;
+                        var cur = await _userManager.FindByIdAsync(Id);
+                        cur.Status = false;
                         _context.Update(user);
                         _context.SaveChanges();
                     }

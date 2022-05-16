@@ -29,6 +29,18 @@
                                 <div class="card-body">
                                     <h3 class="card-text">@item.Name</h3>
                                     <hr align="center" color="grey" />
+                                     <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;">
+                                    @foreach(var r in Model.Tags.Where(m=>m.ItemId==item.Id))
+                                    {
+                                       string[] subs = r.Content.Split(' ');
+                                       foreach(var t in subs)
+                                        {
+                                            <button type="button" class="btn btn-outline-secondary">#@t</button>
+                                        }
+                                    }
+                                    </p>
+                                     <hr align="center" color="grey" />
+
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-sm btn-outline-secondary">@Html.ActionLink("Details", "DetailsItem", new { id = item.Id })</button>
@@ -42,7 +54,7 @@
                     }
                     <div class="col-md-4">
                         <div class="card mb-4 box-shadow">
-                            <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="https://sun9-39.userapi.com/s/v1/if2/Dg13q4NH6tHSh0H1DKZHliNSr7YZfVotsu1KoRX7xRiiy4pb46idMTsF0TMJ1Lb9xuEct1YiOn9g2HJo0m8hSMi7.jpg?size=400x225&quality=96&type=album" data-holder-rendered="true">
+                            <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block;" src="https://firebasestorage.googleapis.com/v0/b/mysys-e8594.appspot.com/o/images%2Ffgh.png?alt=media&token=5e7c59db-d9b2-4485-b0fc-c05a5b7bac84" data-holder-rendered="true">
 
                             <div class="card-body">
                                 <h3 class="card-text" >Sample Name</h3>

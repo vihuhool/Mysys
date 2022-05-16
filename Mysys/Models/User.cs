@@ -12,7 +12,7 @@ namespace Mysys.Models
         public string Name { get; set; }
 
         public string RoleId { get; set; }
-        [ForeignKey("RoleId")]
+        
 
         public virtual Role Role { get; set; }
         public virtual ICollection<Collection> Collections { get; set; }
